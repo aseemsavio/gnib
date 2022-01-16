@@ -1,0 +1,1 @@
+rootProject.name = "com.aseemsavio.rest-api"
