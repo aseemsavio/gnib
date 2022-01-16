@@ -46,7 +46,12 @@ fun Application.configureRouting(configMap: ConfigMap) {
         }
 
         get("/native-image") {
-
+            val image = configMap[JarNameKey]
+            val imageName = if (image is JarName) image.value else ""
+            val file = File("/images/$imageName")
+            if (file.exists()) {
+                call.respondFile(file)
+            } else call.respond(message = "File Not available", status = HttpStatusCode.NotFound)
         }
     }
 }
