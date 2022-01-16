@@ -13,8 +13,10 @@ fun Application.configureRouting(configMap: ConfigMap) {
     // Starting point for a Ktor app:
     routing {
         get("/") {
-            call.respondText("You have reached gnib - Graal VM Native Image Builder. native Image Building has " +
-                    "never been this fun before!")
+            call.respondText(
+                "You have reached gnib - Graal VM Native Image Builder. native Image Building has " +
+                        "never been this fun before!"
+            )
         }
         post("/native-image/arguments") {
             configMap[ArgumentsKey] = arguments(call.receiveText()).toArguments()
@@ -25,19 +27,26 @@ fun Application.configureRouting(configMap: ConfigMap) {
             val file = call.receiveMultipart()
             file.forEachPart { part ->
                 if (part is PartData.FileItem) {
-                    val fileName = part.originalFileName
-                    println("File Name: $fileName")
-                    val file = File("$fileName.pdf")
+                    val fileName = part.originalFileName!!
+                    configMap[JarNameKey] = JarName(fileName)
+                    val file = File("$fileName")
                     part.streamProvider().use { its ->
-                        file.outputStream().buffered().use {
-                            its.copyTo(it)
-                        }
+                        file.outputStream().buffered().use { its.copyTo(it) }
                     }
-                    println("File size: ${file.totalSpace}")
-                    println("Path: ${file.absolutePath}")
+                    if (fileName.endsWith(".jar"))
+                        call.respond(message = "Uploaded JAR", status = HttpStatusCode.Created)
+                    else
+                        call.respond(
+                            message = "ERROR: You can upload only a single JAR file.",
+                            status = HttpStatusCode.BadRequest
+                        )
                 }
                 part.dispose()
             }
+        }
+
+        get("/native-image") {
+
         }
     }
 }
