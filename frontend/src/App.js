@@ -2,6 +2,7 @@ import './App.css';
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import FileUpload from './components/FileUpload';
 
 function App() {
   const [compilationArgs, setArguments] = useState("")
@@ -13,25 +14,23 @@ function App() {
 
   const sendArguments = () => {
     axios.post("http://localhost:8080/native-image/arguments", compilationArgs)
-      .then(resp => setArgumentsResp(resp.data))
+    .then(resp => setArgumentsResp(resp.data))
   }
 
   return (
     <div className="App">
       <header className="App-header">
+        <small>{compilationArgs}</small>
         <h3>gnib - Graal VM Native Image Builder</h3>
-        <button className='button button1'>Upload JAR file</button>
+        <FileUpload/>
         <textarea
           placeholder='Enter your custom "native-image .." command if any'
           className='textarea'
           onChange={handleChange}
         />
-        <button
-          className='button button1'
-          onClick={sendArguments}
-        >Apply Arguments</button>
-        <small>{compilationArgsResp}</small>
-
+        <button className='button button1'>Apply Arguments</button>
+        <br></br>
+        <small>Building Native Image...</small>
         <div className='flexbox-container'>
           <br></br>
           <button className='button button1'>Download the Native Image</button>
