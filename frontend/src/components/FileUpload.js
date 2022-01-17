@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const FileUpload = () => {
+const FileUpload = (props) => {
 
     const [file, setFile] = useState('');
     const [filename, setFilename] = useState('Choose File');
+    const [errorMsg, setError] = useState('')
     const [uploadedFile, setUploadedFile] = useState({});
     const [message, setMessage] = useState('');
     const [uploadPercentage, setUploadPercentage] = useState(0);
@@ -17,7 +18,7 @@ const FileUpload = () => {
 
     const upload = async (event) => {
         event.preventDefault()
-        const formData= new FormData()
+        const formData = new FormData()
         formData.append('file', file)
 
         try {
@@ -26,8 +27,11 @@ const FileUpload = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-        } catch(error) {
 
+            props.present(false)
+            props.next(true)
+        } catch (error) {
+            setError("You can only upload JAR files!")
         }
 
     }
@@ -41,7 +45,10 @@ const FileUpload = () => {
             ></input>
             <br />
             {file ?
-                <button className='button button1'onClick={upload}>Upload <b>{filename}</b></button> : null
+                <button className='button button1' onClick={upload}>Upload <b>{filename}</b></button> : null
+            }
+            {errorMsg ?
+                <p className='errorText'>{errorMsg}</p> : null
             }
         </div>
     )

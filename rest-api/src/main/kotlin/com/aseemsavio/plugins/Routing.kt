@@ -24,24 +24,24 @@ fun Application.configureRouting(configMap: ConfigMap) {
             call.respond(message = "Accepted", status = HttpStatusCode.Accepted)
         }
         post("/jar") {
-            val file = call.receiveMultipart()
-            file.forEachPart { part ->
-                if (part is PartData.FileItem) {
-                    val fileName = part.originalFileName!!
-                    configMap[JarNameKey] = JarName(fileName)
-                    val file = File("$fileName")
-                    part.streamProvider().use { its ->
-                        file.outputStream().buffered().use { its.copyTo(it) }
-                    }
-                    if (fileName.endsWith(".jar"))
+            try {
+                val file = call.receiveMultipart()
+                file.forEachPart { part ->
+                    if (part is PartData.FileItem) {
+                        val fileName = part.originalFileName!!
+                        configMap[JarNameKey] = JarName(fileName)
+                        val file = File("$fileName")
+                        part.streamProvider().use { its ->
+                            file.outputStream().buffered().use { its.copyTo(it) }
+                        }
                         call.respond(message = "Uploaded JAR", status = HttpStatusCode.Created)
-                    else
-                        call.respond(
-                            message = "ERROR: You can upload only a single JAR file.",
-                            status = HttpStatusCode.BadRequest
-                        )
+                    }
+                    part.dispose()
                 }
-                part.dispose()
+            } catch (e: Exception) {
+                println(e.message)
+                println(e.localizedMessage)
+                call.respond(message = e.message!!, status = HttpStatusCode.BadRequest)
             }
         }
 
