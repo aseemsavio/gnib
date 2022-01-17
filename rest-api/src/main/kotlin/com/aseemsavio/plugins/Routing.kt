@@ -20,7 +20,7 @@ fun Application.configureRouting(configMap: ConfigMap) {
         }
         post("/native-image/arguments") {
             configMap[ArgumentsKey] = arguments(call.receiveText()).toArguments()
-            println(configMap)
+            println("Arguments changed: ${configMap[ArgumentsKey]}")
             call.respond(message = "Accepted", status = HttpStatusCode.Accepted)
         }
         post("/jar") {
@@ -34,6 +34,7 @@ fun Application.configureRouting(configMap: ConfigMap) {
                         part.streamProvider().use { its ->
                             file.outputStream().buffered().use { its.copyTo(it) }
                         }
+                        println("JAR uploaded: ${file.absolutePath}")
                         call.respond(message = "Uploaded JAR", status = HttpStatusCode.Created)
                     }
                     part.dispose()
