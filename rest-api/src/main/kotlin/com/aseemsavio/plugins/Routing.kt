@@ -6,6 +6,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import kotlinx.coroutines.delay
 import java.io.File
 
 fun Application.configureRouting(configMap: ConfigMap) {
@@ -44,6 +45,11 @@ fun Application.configureRouting(configMap: ConfigMap) {
                 println(e.localizedMessage)
                 call.respond(message = e.message!!, status = HttpStatusCode.BadRequest)
             }
+        }
+
+        post("/build/native-image") {
+            delay(10000)
+            call.respond(message = "Build Successful!", status = HttpStatusCode.Created)
         }
 
         get("/native-image") {
