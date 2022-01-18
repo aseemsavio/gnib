@@ -3,7 +3,7 @@ package com.aseemsavio.plugins
 data class NativeImageArgument(val value: String) {
     init {
         value.trim()
-        value.toCharArray().forEach { check(!it.isWhitespace()) }
+        value.toCharArray().forEach { check(!it.isWhitespace()) { "Individual arguments should not have whitespace within." } }
     }
 }
 
@@ -17,7 +17,7 @@ data class JarName(val value: String): StoredConfigValue() {
     init {
         value.trim()
         value.toCharArray().forEach { check(!it.isWhitespace()) }
-        check(value.endsWith(".jar"))
+        check(value.endsWith(".jar")) { "You can only upload JAR files." }
     }
 }
 

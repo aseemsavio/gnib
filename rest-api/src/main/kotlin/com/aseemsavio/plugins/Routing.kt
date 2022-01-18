@@ -20,9 +20,13 @@ fun Application.configureRouting(configMap: ConfigMap) {
             )
         }
         post("/native-image/arguments") {
-            configMap[ArgumentsKey] = arguments(call.receiveText()).toArguments()
-            println("Arguments changed: ${configMap[ArgumentsKey]}")
-            call.respond(message = "Accepted", status = HttpStatusCode.Accepted)
+            try {
+                configMap[ArgumentsKey] = arguments(call.receiveText()).toArguments()
+                println("Arguments changed: ${configMap[ArgumentsKey]}")
+                call.respond(message = "Accepted", status = HttpStatusCode.Accepted)
+            } catch (e: Exception) {
+                call.respond(message = e.message!!, status = HttpStatusCode.BadRequest)
+            }
         }
         post("/jar") {
             try {
@@ -41,8 +45,6 @@ fun Application.configureRouting(configMap: ConfigMap) {
                     part.dispose()
                 }
             } catch (e: Exception) {
-                println(e.message)
-                println(e.localizedMessage)
                 call.respond(message = e.message!!, status = HttpStatusCode.BadRequest)
             }
         }
