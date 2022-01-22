@@ -3,17 +3,18 @@ package com.aseemsavio.plugins
 data class NativeImageArgument(val value: String) {
     init {
         value.trim()
-        value.toCharArray().forEach { check(!it.isWhitespace()) { "Individual arguments should not have whitespace within." } }
+        value.toCharArray()
+            .forEach { check(!it.isWhitespace()) { "Individual arguments should not have whitespace within." } }
     }
 }
 
 sealed class StoredConfigKey
-object ArgumentsKey: StoredConfigKey()
-object JarNameKey: StoredConfigKey()
+object ArgumentsKey : StoredConfigKey()
+object JarNameKey : StoredConfigKey()
 
 sealed class StoredConfigValue
-data class Arguments(val arguments: Set<NativeImageArgument>): StoredConfigValue()
-data class JarName(val value: String): StoredConfigValue() {
+data class Arguments(val arguments: List<NativeImageArgument>) : StoredConfigValue()
+data class JarName(val value: String) : StoredConfigValue() {
     init {
         value.trim()
         value.toCharArray().forEach { check(!it.isWhitespace()) }
@@ -24,5 +25,5 @@ data class JarName(val value: String): StoredConfigValue() {
 fun configMap(): ConfigMap = mutableMapOf()
 typealias ConfigMap = MutableMap<StoredConfigKey, StoredConfigValue>
 
-fun Set<NativeImageArgument>.toArguments() = Arguments(this)
+fun List<NativeImageArgument>.toArguments() = Arguments(this)
 

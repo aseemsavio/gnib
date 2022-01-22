@@ -11,7 +11,6 @@ import java.io.File
 
 fun Application.configureRouting(configMap: ConfigMap) {
 
-    // Starting point for a Ktor app:
     routing {
         get("/") {
             call.respondText(
