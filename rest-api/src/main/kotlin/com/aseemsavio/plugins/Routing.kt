@@ -61,5 +61,9 @@ fun Application.configureRouting(configMap: ConfigMap) {
                 call.respondFile(file)
             } else call.respond(message = "File Not available", status = HttpStatusCode.NotFound)
         }
+
+        get("/logs") {
+            call.respond(message = "Logs will be sent.")
+        }
     }
 }
