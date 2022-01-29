@@ -12,7 +12,8 @@ ENV PATH "${JAVA_HOME}/bin:${PATH}"
 RUN bash -c 'apt-get update && \
     apt-get install gcc zlib1g-dev build-essential -y && \
     apt-get install wget -y && \
-    apt-get install tar -y'
+    apt-get install tar -y && \
+    apt-get install busybox -y'
 
 # Installs the Java (GraalVM runtime) related dependencies in the bash terminal.
 RUN bash -c 'wget https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-linux-aarch64-22.0.0.2.tar.gz && \
@@ -22,3 +23,17 @@ RUN bash -c 'wget https://github.com/graalvm/graalvm-ce-builds/releases/download
     rm graalvm-ce-java11-linux-aarch64-22.0.0.2.tar.gz && \
     java -version && \
     gu install native-image'
+
+# Creates a folders to house files.
+RUN bash -c 'mkdir /www && \
+    mkdir scripts'
+
+COPY ./frontend/build/ /www/
+
+COPY ./scripts/ /scripts/
+
+RUN chmod +x /scripts/startFrontend.sh
+
+CMD [ "/scripts/startFrontend.sh" ]
+
+EXPOSE 1234
